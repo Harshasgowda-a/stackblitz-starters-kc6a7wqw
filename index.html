@@ -245,6 +245,72 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Jost',sans-serif;-
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .online-dot{width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block;margin-right:5px;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* ── CYCLE BANNER ── */
+.cycle-banner{
+  background:#fff;border-bottom:1px solid #f0f0f0;
+  padding:10px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.cycle-pill{
+  background:#f5f5f5;border-radius:999px;padding:5px 14px;
+  font-size:12px;font-weight:600;color:var(--black);flex:1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.cycle-pill-live{background:#eafaf1;color:var(--green);}
+.cycle-days{font-size:10px;color:#bbb;letter-spacing:1px;flex-shrink:0;}
+.cycle-settle-btn{
+  padding:6px 16px;border-radius:999px;background:var(--black);
+  color:#fff;border:none;font-family:'Jost',sans-serif;
+  font-size:11px;font-weight:600;letter-spacing:1px;cursor:pointer;
+  white-space:nowrap;transition:all 0.2s;
+}
+.cycle-settle-btn:active{opacity:0.8;transform:scale(0.97);}
+
+/* ── CYCLE SUMMARY (end of expense list) ── */
+.cycle-summary{
+  background:var(--black);border-radius:20px;padding:22px;
+  margin-top:20px;margin-bottom:8px;color:#fff;
+}
+.cs-title{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;}
+.cs-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;letter-spacing:2px;margin-bottom:16px;}
+.cs-total{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;line-height:1;margin-bottom:4px;}
+.cs-sub{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:2px;margin-bottom:18px;}
+.cs-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.08);}
+.cs-row:last-child{border-bottom:none;}
+.cs-ava{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.cs-name2{font-size:13px;flex:1;}
+.cs-paid{font-size:11px;color:rgba(255,255,255,0.4);}
+.cs-bal{font-size:13px;font-weight:600;}
+.cs-pos{color:#2ecc71;}
+.cs-neg{color:#e74c3c;}
+.cs-settle-rows{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1);}
+.cs-settle-lbl{font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.cs-settle-row{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;}
+.cs-arrow{color:rgba(255,255,255,0.3);font-size:12px;}
+
+/* ── HISTORY TAB ── */
+.hist-cycle{
+  background:#fff;border:1px solid #f0f0f0;border-radius:16px;
+  margin-bottom:12px;overflow:hidden;
+}
+.hist-header{
+  padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:12px;
+}
+.hist-icon{width:40px;height:40px;border-radius:12px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.hist-name{font-size:14px;font-weight:600;color:var(--black);}
+.hist-meta{font-size:11px;color:#bbb;margin-top:2px;}
+.hist-total{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--black);margin-left:auto;flex-shrink:0;}
+.hist-chevron{font-size:16px;color:#ccc;flex-shrink:0;transition:transform 0.2s;}
+.hist-chevron.open{transform:rotate(90deg);}
+.hist-body{padding:0 18px 16px;display:none;border-top:1px solid #f5f5f5;}
+.hist-body.open{display:block;}
+.hist-exp-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f8f8f8;}
+.hist-exp-row:last-child{border-bottom:none;}
+.hist-badge{font-size:9px;font-weight:600;padding:2px 8px;border-radius:999px;letter-spacing:1px;text-transform:uppercase;}
+.hist-closed{background:#f0f0f0;color:#aaa;}
+.hist-settle-chip{background:#eafaf1;border-radius:12px;padding:12px;margin-top:12px;}
+.hist-settle-title{font-size:10px;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.hist-settle-line{font-size:13px;color:var(--black);padding:4px 0;display:flex;align-items:center;gap:6px;}
 </style>
 </head>
 <body>
@@ -353,11 +419,18 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Jost',sans-serif;-
         <button class="hdr-btn" onclick="switchTab('settings')">⚙️</button>
       </div>
     </div>
+    <!-- CYCLE BANNER -->
+    <div class="cycle-banner" id="cycle-banner">
+      <span style="font-size:18px">📂</span>
+      <div class="cycle-pill cycle-pill-live" id="cycle-pill">Loading...</div>
+      <span class="cycle-days" id="cycle-days"></span>
+      <button class="cycle-settle-btn" onclick="openSettleModal()">Settle &amp; Close</button>
+    </div>
     <div class="nav-row">
       <button class="nav-item active" id="tab-expenses" onclick="switchTab('expenses')"><span class="nav-icon">💳</span><span class="nav-label">Expenses</span></button>
       <button class="nav-item" id="tab-chat" onclick="switchTab('chat')"><span class="nav-icon">💬</span><span class="nav-label">Chat</span></button>
       <button class="nav-item" id="tab-dashboard" onclick="switchTab('dashboard')"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></button>
-      <button class="nav-item" id="tab-settle" onclick="switchTab('settle')"><span class="nav-icon">🤝</span><span class="nav-label">Settle</span></button>
+      <button class="nav-item" id="tab-history" onclick="switchTab('history')"><span class="nav-icon">🗂️</span><span class="nav-label">History</span></button>
       <button class="nav-item" id="tab-settings" onclick="switchTab('settings')"><span class="nav-icon">👤</span><span class="nav-label">Profile</span></button>
     </div>
   </div>
@@ -369,6 +442,8 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Jost',sans-serif;-
         <div class="empty-title">No expenses yet</div>
         <div class="empty-sub">Tap + to add your first expense</div>
       </div>
+      <!-- LIVE CYCLE SUMMARY shown at bottom of expense list -->
+      <div id="cycle-summary-wrap"></div>
     </div>
     <div id="panel-chat" class="tab-panel" style="padding:0">
       <div class="chat-panel">
@@ -386,7 +461,7 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Jost',sans-serif;-
       </div>
     </div>
     <div id="panel-dashboard" class="tab-panel"><div id="dash-content"></div></div>
-    <div id="panel-settle" class="tab-panel"><div id="settle-content"></div></div>
+    <div id="panel-history" class="tab-panel"><div id="history-content"></div></div>
     <div id="panel-settings" class="tab-panel"><div id="settings-content"></div></div>
   </div>
   <div class="fab-area">
@@ -484,6 +559,38 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Jost',sans-serif;-
   </div>
 </div>
 
+<!-- SETTLE & CLOSE CYCLE MODAL -->
+<div id="modal-settle" class="modal-overlay hidden">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Settle &amp; Close</div>
+    <div class="modal-sub" id="settle-modal-sub">Review before closing</div>
+    <div class="modal-body">
+      <div id="settle-modal-body"></div>
+      <div style="height:14px"></div>
+      <input class="input-field" id="new-cycle-name" type="text" placeholder="Name for next cycle (e.g. April 2025)" style="margin-bottom:14px">
+      <button class="btn-primary" id="close-cycle-btn" onclick="closeCycle()" style="background:var(--green)">✓ Settle &amp; Start New Cycle</button>
+      <div style="height:10px"></div>
+      <button class="btn-secondary" onclick="closeModal('modal-settle')" style="border-color:#eee">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW CYCLE MODAL (first time) -->
+<div id="modal-new-cycle" class="modal-overlay hidden">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Start a Cycle</div>
+    <div class="modal-sub">Name this expense period</div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:#888;margin-bottom:20px;line-height:1.6">A cycle is a group of expenses you track together — like a month's household costs. At the end, you settle up and start fresh.</p>
+      <label class="input-label">Cycle Name</label>
+      <input class="input-field" id="first-cycle-name" type="text" placeholder="e.g. March 2025, Q1 Expenses...">
+      <button class="btn-primary" onclick="createFirstCycle()">Create Cycle 🚀</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <script>
@@ -492,7 +599,9 @@ html,body{height:100%;width:100%;overflow:hidden;font-family:'Jost',sans-serif;-
 ════════════════════════════════════════ */
 const SUPA_URL = 'https://icnulonwtwsmpfupsuag.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljbnVsb253dHdzbXBmdXBzdWFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MzY4NTQsImV4cCI6MjA4NzExMjg1NH0.mNcw2L1pf-O3JblkOPKI7RNwq0Jx7hUFbOUImAFbLyc';
-const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY, {
+  realtime: { params: { eventsPerSecond: 10 } }
+});
 
 /* ════════════════════════════════════════
    CONSTANTS
@@ -511,11 +620,18 @@ const CATS = [
   {id:'na',icon:'🚫',label:'NA (Skip)'},
 ];
 
-/* Local session only (not data) */
+/* localStorage — session + local cache for instant loads */
 const S = {
   get: k => { try { const d = localStorage.getItem(k); return d ? JSON.parse(d) : null; } catch { return null; } },
   set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
   rm: k => localStorage.removeItem(k),
+};
+const Cache = {
+  expenses: (hid, data) => data !== undefined ? S.set('c_exp_'+hid, data) : (S.get('c_exp_'+hid) || []),
+  members:  (hid, data) => data !== undefined ? S.set('c_mem_'+hid, data) : (S.get('c_mem_'+hid) || []),
+  home:     (hid, data) => data !== undefined ? S.set('c_hom_'+hid, data) : S.get('c_hom_'+hid),
+  msgs:     (hid, data) => data !== undefined ? S.set('c_msg_'+hid, data) : (S.get('c_msg_'+hid) || []),
+  gal:      (hid, data) => data !== undefined ? S.set('c_gal_'+hid, data) : (S.get('c_gal_'+hid) || []),
 };
 
 /* ════════════════════════════════════════
@@ -525,9 +641,10 @@ let U = null, HID = null, lgMode = 'create';
 let memberRows = [], selCat = '', selPB = '', recImg = null, activeTab = 'expenses';
 let _editId = null, _editCat = '', _editPB = '';
 let _swipedEl = null;
-let _homeMembers = [], _homeExpenses = [];
+let _homeMembers = [], _homeExpenses = [], _homeMsgs = [], _homeGal = [], _homeData = null;
 let _realtimeSubs = [];
 let _chatUnread = 0;
+let _activeCycle = null, _allCycles = [];
 
 /* ════════════════════════════════════════
    ANIMATED LOGIN BARS
@@ -700,90 +817,139 @@ async function renderHomePicker() {
 }
 
 /* ════════════════════════════════════════
-   ENTER HOME — load data + start realtime
+   ENTER HOME — instant from cache, then sync
 ════════════════════════════════════════ */
 async function enterHome(hid) {
   HID = hid;
-  // Unsubscribe from any previous home
   _realtimeSubs.forEach(s => sb.removeChannel(s));
   _realtimeSubs = [];
 
-  // Load home + members
-  const { data: home } = await sb.from('homes').select('*').eq('id', hid).single();
-  const { data: members } = await sb.from('members').select('*').eq('home_id', hid);
-  _homeMembers = members || [];
+  // ① Show cached data INSTANTLY
+  _homeData     = Cache.home(hid)    || { name: 'My Home' };
+  _homeMembers  = Cache.members(hid);
+  _homeExpenses = Cache.expenses(hid);
+  _activeCycle  = S.get('c_cyc_' + hid) || null;
+  _allCycles    = S.get('c_cycs_' + hid) || [];
 
-  document.getElementById('main-home-name').textContent = home?.name || 'My Home';
-  document.getElementById('member-count-txt').textContent = _homeMembers.length + ' members · live';
+  document.getElementById('main-home-name').textContent = _homeData.name;
+  document.getElementById('member-count-txt').textContent = (_homeMembers.length || '…') + ' members · live';
+  updateCycleBanner();
 
   go('main');
   switchTab('expenses');
-  await loadExpenses();
-  updateGalleryBadge();
   startRealtime();
+
+  // ② Fetch all in PARALLEL
+  const [homeRes, membersRes, expRes, cyclesRes] = await Promise.all([
+    sb.from('homes').select('*').eq('id', hid).single(),
+    sb.from('members').select('*').eq('home_id', hid),
+    sb.from('expenses').select('*').eq('home_id', hid).order('created_at', { ascending: true }),
+    sb.from('cycles').select('*').eq('home_id', hid).order('created_at', { ascending: false }),
+  ]);
+
+  if (homeRes.data) { _homeData = homeRes.data; Cache.home(hid, homeRes.data); document.getElementById('main-home-name').textContent = homeRes.data.name; }
+  if (membersRes.data) { _homeMembers = membersRes.data; Cache.members(hid, membersRes.data); document.getElementById('member-count-txt').textContent = membersRes.data.length + ' members · live'; }
+  if (expRes.data) { _homeExpenses = expRes.data; Cache.expenses(hid, expRes.data); }
+  if (cyclesRes.data) {
+    _allCycles = cyclesRes.data;
+    S.set('c_cycs_' + hid, _allCycles);
+    _activeCycle = cyclesRes.data.find(c => c.status === 'active') || null;
+    S.set('c_cyc_' + hid, _activeCycle);
+    updateCycleBanner();
+  }
+
+  renderExpenses();
+
+  // No active cycle → prompt to create one
+  if (!_activeCycle) setTimeout(() => openModal('modal-new-cycle'), 700);
+
+  // Gallery badge
+  sb.from('gallery').select('*', { count: 'exact', head: true }).eq('home_id', hid)
+    .then(({ count }) => {
+      const b = document.getElementById('gallery-badge');
+      if (count > 0) { b.style.display = 'flex'; b.textContent = count; } else b.style.display = 'none';
+    });
 }
 
 /* ════════════════════════════════════════
-   REALTIME SUBSCRIPTIONS
+   REALTIME — handles OTHERS' changes only
+   (own actions use optimistic UI below)
 ════════════════════════════════════════ */
 function startRealtime() {
-  // Expenses channel
-  const expCh = sb.channel('expenses-' + HID)
+  const expCh = sb.channel('rt-exp-' + HID)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses', filter: `home_id=eq.${HID}` },
-      payload => {
-        if (payload.eventType === 'INSERT') {
-          if (payload.new.paid_by !== U.name) toast(`💳 ${payload.new.paid_by} added ₹${payload.new.amount}`);
-          loadExpenses();
+      ({ eventType, new: n, old: o }) => {
+        if (eventType === 'INSERT') {
+          // Only add if not already in list (optimistic insert already added it)
+          if (!_homeExpenses.find(e => e.id === n.id)) {
+            _homeExpenses.push(n);
+            Cache.expenses(HID, _homeExpenses);
+            if (n.paid_by !== U.name) toast(`💳 ${n.paid_by} added ₹${Number(n.amount).toLocaleString('en-IN')}`);
+            renderExpenses();
+          }
         }
-        if (payload.eventType === 'UPDATE') loadExpenses();
-        if (payload.eventType === 'DELETE') loadExpenses();
+        if (eventType === 'UPDATE') {
+          const idx = _homeExpenses.findIndex(e => e.id === n.id);
+          if (idx !== -1) { _homeExpenses[idx] = n; Cache.expenses(HID, _homeExpenses); renderExpenses(); }
+        }
+        if (eventType === 'DELETE') {
+          _homeExpenses = _homeExpenses.filter(e => e.id !== o.id);
+          Cache.expenses(HID, _homeExpenses); renderExpenses();
+        }
       })
     .subscribe();
 
-  // Messages channel
-  const msgCh = sb.channel('messages-' + HID)
+  const msgCh = sb.channel('rt-msg-' + HID)
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `home_id=eq.${HID}` },
-      payload => {
-        const msg = payload.new;
-        if (activeTab === 'chat') {
-          appendChatMessage(msg);
-          scrollChat();
-        } else if (msg.sender !== U.name) {
+      ({ new: m }) => {
+        // Skip if already added optimistically
+        if (_homeMsgs.find(x => x.id === m.id)) return;
+        _homeMsgs.push(m);
+        Cache.msgs(HID, _homeMsgs);
+        if (activeTab === 'chat') { appendChatMessage(m); scrollChat(); }
+        else if (m.sender !== U.name) {
           _chatUnread++;
-          const badge = document.getElementById('chat-unread');
-          badge.style.display = 'flex'; badge.textContent = _chatUnread;
+          const b = document.getElementById('chat-unread');
+          b.style.display = 'flex'; b.textContent = _chatUnread;
         }
       })
     .subscribe();
 
-  // Gallery channel
-  const galCh = sb.channel('gallery-' + HID)
+  const galCh = sb.channel('rt-gal-' + HID)
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'gallery', filter: `home_id=eq.${HID}` },
-      () => updateGalleryBadge())
+      ({ new: g }) => {
+        if (!_homeGal.find(x => x.id === g.id)) {
+          _homeGal.unshift(g); Cache.gal(HID, _homeGal);
+          const b = document.getElementById('gallery-badge');
+          b.style.display = 'flex'; b.textContent = _homeGal.length;
+        }
+      })
     .subscribe();
 
   _realtimeSubs = [expCh, msgCh, galCh];
 }
 
-/* ════════════════════════════════════════
-   EXPENSES — LOAD + RENDER
-════════════════════════════════════════ */
-async function loadExpenses() {
-  const { data } = await sb.from('expenses').select('*').eq('home_id', HID).order('created_at', { ascending: true });
-  _homeExpenses = data || [];
-  renderExpenses();
-  if (activeTab === 'dashboard') renderDash();
-  if (activeTab === 'settle') renderSettle();
-}
-
 function renderExpenses() {
   const list = document.getElementById('exp-list');
   const empty = document.getElementById('exp-empty');
-  if (!_homeExpenses.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none'; list.innerHTML = '';
+  const summaryWrap = document.getElementById('cycle-summary-wrap');
   _swipedEl = null;
 
-  [..._homeExpenses].reverse().forEach((e, i) => {
+  // Filter to active cycle only
+  const cycleExps = _activeCycle
+    ? _homeExpenses.filter(e => e.cycle_id === _activeCycle.id)
+    : _homeExpenses;
+
+  if (!cycleExps.length) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    summaryWrap.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+  list.innerHTML = '';
+
+  [...cycleExps].reverse().forEach((e, i) => {
     if (e.deleted) {
       const d = document.createElement('div');
       d.className = 'exp-deleted'; d.style.animationDelay = i * 0.04 + 's';
@@ -810,6 +976,265 @@ function renderExpenses() {
     attachSwipe(item.querySelector('.exp-content'), 140);
     list.appendChild(item);
   });
+
+  // Render live summary card at bottom
+  summaryWrap.innerHTML = '';
+  if (_activeCycle && cycleExps.filter(e => !e.deleted).length > 0) {
+    summaryWrap.appendChild(buildSummaryCard(cycleExps, _activeCycle, true));
+  }
+}
+
+/* ════════════════════════════════════════
+   CYCLE HELPERS
+════════════════════════════════════════ */
+function cycleExpsFor(cycle) {
+  return _homeExpenses.filter(e => e.cycle_id === cycle.id && !e.deleted);
+}
+
+function computeBalances(exps) {
+  const total = exps.reduce((s, e) => s + Number(e.amount), 0);
+  const n = _homeMembers.length; const ph = n > 0 ? total / n : 0;
+  const paid = {}; _homeMembers.forEach(m => paid[m.name] = 0);
+  exps.forEach(e => { if (paid[e.paid_by] !== undefined) paid[e.paid_by] += Number(e.amount); });
+  const bal = {}; _homeMembers.forEach(m => { bal[m.name] = (paid[m.name] || 0) - ph; });
+  return { total, ph, paid, bal };
+}
+
+function computeSettlements(bal) {
+  const settlements = []; const b = { ...bal };
+  for (let i = 0; i < 30; i++) {
+    const creds = Object.entries(b).filter(([, v]) => v > 0.5).sort((a, c) => c[1] - a[1]);
+    const debts = Object.entries(b).filter(([, v]) => v < -0.5).sort((a, c) => a[1] - c[1]);
+    if (!creds.length || !debts.length) break;
+    const [cn, cv] = creds[0]; const [dn, dv] = debts[0];
+    const amt = Math.min(cv, -dv);
+    settlements.push({ from: dn, to: cn, amount: Math.round(amt) });
+    b[cn] -= amt; b[dn] += amt;
+  }
+  return settlements;
+}
+
+function buildSummaryCard(exps, cycle, isLive) {
+  const activeExps = exps.filter(e => !e.deleted);
+  const { total, ph, paid, bal } = computeBalances(activeExps);
+  const settlements = computeSettlements(bal);
+
+  const card = document.createElement('div');
+  card.className = 'cycle-summary';
+
+  let membersHtml = _homeMembers.map(m => {
+    const p = paid[m.name] || 0; const b = bal[m.name] || 0;
+    const cls = b > 0.5 ? 'cs-pos' : b < -0.5 ? 'cs-neg' : '';
+    const lbl = b > 0.5 ? `+₹${Math.round(b)}` : b < -0.5 ? `-₹${Math.round(Math.abs(b))}` : '✓';
+    return `<div class="cs-row">
+      <div class="cs-ava">${m.name.charAt(0).toUpperCase()}</div>
+      <div style="flex:1"><div class="cs-name2">${m.name}</div><div class="cs-paid">Paid ₹${p.toLocaleString('en-IN')}</div></div>
+      <div class="cs-bal ${cls}">${lbl}</div>
+    </div>`;
+  }).join('');
+
+  let settleHtml = settlements.length ? `
+    <div class="cs-settle-rows">
+      <div class="cs-settle-lbl">Who Pays Whom</div>
+      ${settlements.map(s => `<div class="cs-settle-row">
+        <div class="cs-ava">${s.from.charAt(0).toUpperCase()}</div>
+        <span class="cs-arrow">→</span>
+        <div class="cs-ava">${s.to.charAt(0).toUpperCase()}</div>
+        <span style="flex:1;font-size:13px">${s.from} pays ${s.to}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:18px">₹${s.amount.toLocaleString('en-IN')}</span>
+      </div>`).join('')}
+    </div>` : `<div style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1)">🎉 All settled up!</div>`;
+
+  card.innerHTML = `
+    <div class="cs-title">${isLive ? '● LIVE SUMMARY' : 'SUMMARY'}</div>
+    <div class="cs-name">${cycle.name}</div>
+    <div class="cs-total">₹${total.toLocaleString('en-IN')}</div>
+    <div class="cs-sub">₹${Math.round(ph).toLocaleString('en-IN')} PER HEAD · ${activeExps.length} EXPENSES</div>
+    ${membersHtml}
+    ${settleHtml}
+    ${isLive ? `<div style="margin-top:16px"><button onclick="openSettleModal()" style="width:100%;padding:13px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:14px;color:#fff;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:1px">Settle &amp; Close This Cycle →</button></div>` : ''}
+  `;
+  return card;
+}
+
+/* ════════════════════════════════════════
+   CYCLE BANNER
+════════════════════════════════════════ */
+function updateCycleBanner() {
+  const pill = document.getElementById('cycle-pill');
+  const days = document.getElementById('cycle-days');
+  if (!_activeCycle) {
+    pill.textContent = 'No active cycle';
+    pill.className = 'cycle-pill';
+    days.textContent = '';
+    return;
+  }
+  pill.textContent = _activeCycle.name;
+  pill.className = 'cycle-pill cycle-pill-live';
+  const d = Math.floor((Date.now() - _activeCycle.created_at) / 86400000);
+  days.textContent = d === 0 ? 'Today' : d + 'd';
+}
+
+/* ════════════════════════════════════════
+   CREATE FIRST CYCLE
+════════════════════════════════════════ */
+async function createFirstCycle() {
+  const name = document.getElementById('first-cycle-name').value.trim();
+  if (!name) { toast('Enter a cycle name'); return; }
+  closeModal('modal-new-cycle');
+  await createCycle(name);
+}
+
+async function createCycle(name) {
+  const cycleId = 'cy_' + Date.now();
+  const cycleObj = { id: cycleId, home_id: HID, name, status: 'active', created_at: Date.now(), closed_at: null, closed_by: null, settlements_json: null };
+  _activeCycle = cycleObj;
+  _allCycles.unshift(cycleObj);
+  S.set('c_cyc_' + HID, _activeCycle);
+  S.set('c_cycs_' + HID, _allCycles);
+  updateCycleBanner();
+  renderExpenses();
+  toast('🚀 Cycle "' + name + '" started!');
+  sb.from('cycles').insert(cycleObj);
+}
+
+/* ════════════════════════════════════════
+   OPEN SETTLE MODAL
+════════════════════════════════════════ */
+function openSettleModal() {
+  if (!_activeCycle) { toast('No active cycle'); return; }
+  const exps = cycleExpsFor(_activeCycle);
+  const { total, ph, bal } = computeBalances(exps);
+  const settlements = computeSettlements(bal);
+
+  document.getElementById('settle-modal-sub').textContent = _activeCycle.name + ' · ₹' + total.toLocaleString('en-IN');
+
+  let html = `<div style="background:#f8f8f8;border-radius:14px;padding:16px;margin-bottom:16px">`;
+  html += `<div style="font-size:10px;color:#aaa;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px">Who Pays Whom</div>`;
+  if (!settlements.length) {
+    html += `<div style="font-size:14px;color:var(--green);text-align:center;padding:8px">🎉 Everyone is settled up!</div>`;
+  } else {
+    settlements.forEach(s => {
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #eee;font-size:14px">
+        <div style="width:32px;height:32px;border-radius:9px;background:#fdf2f2;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--red);font-size:13px">${s.from.charAt(0).toUpperCase()}</div>
+        <span style="color:#ccc">→</span>
+        <div style="width:32px;height:32px;border-radius:9px;background:#eafaf1;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--green);font-size:13px">${s.to.charAt(0).toUpperCase()}</div>
+        <div style="flex:1"><b>${s.from}</b> pays <b>${s.to}</b></div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--red)">₹${s.amount.toLocaleString('en-IN')}</div>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+  html += `<div style="font-size:13px;color:#aaa;margin-bottom:16px;line-height:1.6">After everyone pays up, close this cycle and start a new one. The history will be saved forever.</div>`;
+  document.getElementById('settle-modal-body').innerHTML = html;
+
+  // Pre-fill next cycle name suggestion
+  const now = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('new-cycle-name').value = months[now.getMonth()] + ' ' + now.getFullYear();
+
+  openModal('modal-settle');
+}
+
+/* ════════════════════════════════════════
+   CLOSE CYCLE & START NEW
+════════════════════════════════════════ */
+async function closeCycle() {
+  const newName = document.getElementById('new-cycle-name').value.trim();
+  if (!newName) { toast('Enter a name for the new cycle'); return; }
+  if (!_activeCycle) return;
+
+  const btn = document.getElementById('close-cycle-btn');
+  btn.textContent = 'Closing...'; btn.disabled = true;
+
+  // Compute final settlements to store
+  const exps = cycleExpsFor(_activeCycle);
+  const { bal } = computeBalances(exps);
+  const settlements = computeSettlements(bal);
+
+  // ① Close current cycle optimistically
+  const closedCycle = { ..._activeCycle, status: 'closed', closed_at: Date.now(), closed_by: U.name, settlements_json: JSON.stringify(settlements) };
+  const idx = _allCycles.findIndex(c => c.id === _activeCycle.id);
+  if (idx !== -1) _allCycles[idx] = closedCycle;
+  _activeCycle = null;
+  S.set('c_cyc_' + HID, null);
+  S.set('c_cycs_' + HID, _allCycles);
+
+  closeModal('modal-settle');
+  toast('Cycle closed ✓');
+  btn.textContent = '✓ Settle & Start New Cycle'; btn.disabled = false;
+
+  // ② Start new cycle optimistically
+  await createCycle(newName);
+
+  // ③ Sync close to Supabase in background
+  sb.from('cycles').update({ status: 'closed', closed_at: closedCycle.closed_at, closed_by: U.name, settlements_json: closedCycle.settlements_json }).eq('id', closedCycle.id);
+}
+
+/* ════════════════════════════════════════
+   HISTORY TAB
+════════════════════════════════════════ */
+function renderHistory() {
+  const el = document.getElementById('history-content');
+  const closed = _allCycles.filter(c => c.status === 'closed');
+
+  if (!closed.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🗂️</div><div class="empty-title">No history yet</div><div class="empty-sub">Closed cycles will appear here with full expense details</div></div>`;
+    return;
+  }
+
+  el.innerHTML = `<div class="panel-lbl">Closed Cycles (${closed.length})</div>`;
+  closed.forEach((cycle, ci) => {
+    const cycleExps = cycleExpsFor(cycle);
+    const { total, paid, bal } = computeBalances(cycleExps);
+    const settlements = cycle.settlements_json ? JSON.parse(cycle.settlements_json) : computeSettlements(bal);
+    const startDate = new Date(cycle.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    const endDate = cycle.closed_at ? new Date(cycle.closed_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+
+    const card = document.createElement('div'); card.className = 'hist-cycle';
+    const bodyId = 'hb_' + cycle.id;
+    const chevId = 'hc_' + cycle.id;
+
+    let settleLines = settlements.length
+      ? settlements.map(s => `<div class="hist-settle-line"><div style="width:26px;height:26px;border-radius:7px;background:#fdf2f2;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--red);font-size:11px;flex-shrink:0">${s.from.charAt(0).toUpperCase()}</div><span style="color:#ccc;font-size:11px">→</span><div style="width:26px;height:26px;border-radius:7px;background:#eafaf1;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--green);font-size:11px;flex-shrink:0">${s.to.charAt(0).toUpperCase()}</div><span style="flex:1">${s.from} → ${s.to}</span><span style="font-family:'Cormorant Garamond',serif;font-size:17px">₹${s.amount.toLocaleString('en-IN')}</span></div>`).join('')
+      : '<div style="font-size:13px;color:var(--green)">🎉 All settled — no transfers needed</div>';
+
+    let expLines = cycleExps.length
+      ? cycleExps.map(e => `<div class="hist-exp-row"><div style="font-size:18px;width:32px;text-align:center">${e.icon}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--black)">${e.paid_by}</div><div style="font-size:11px;color:#bbb">${e.description} · ${e.date}</div></div><div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--black);flex-shrink:0">₹${Number(e.amount).toLocaleString('en-IN')}</div></div>`).join('')
+      : '<div style="font-size:13px;color:#ccc;padding:12px 0">No expenses</div>';
+
+    card.innerHTML = `
+      <div class="hist-header" onclick="toggleHist('${cycle.id}')">
+        <div class="hist-icon">🗂️</div>
+        <div style="flex:1;min-width:0">
+          <div class="hist-name">${cycle.name}</div>
+          <div class="hist-meta">${startDate} → ${endDate} · ${cycleExps.length} expenses</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="hist-total">₹${total.toLocaleString('en-IN')}</div>
+          <div style="font-size:10px;color:#aaa;margin-top:2px">Closed by ${cycle.closed_by || '—'}</div>
+        </div>
+        <span class="hist-chevron" id="${chevId}">›</span>
+      </div>
+      <div class="hist-body" id="${bodyId}">
+        <div style="padding-top:14px">
+          <div class="hist-settle-chip">
+            <div class="hist-settle-title">Final Settlements</div>
+            ${settleLines}
+          </div>
+          <div style="font-size:10px;color:#bbb;letter-spacing:3px;text-transform:uppercase;margin:14px 0 8px">Expenses</div>
+          ${expLines}
+        </div>
+      </div>`;
+    el.appendChild(card);
+  });
+}
+
+function toggleHist(id) {
+  const body = document.getElementById('hb_' + id);
+  const chev = document.getElementById('hc_' + id);
+  const open = body.classList.toggle('open');
+  chev.classList.toggle('open', open);
 }
 
 /* ════════════════════════════════════════
@@ -850,16 +1275,54 @@ document.addEventListener('touchstart', e => {
 }, { passive: true });
 
 /* ════════════════════════════════════════
-   DELETE & EDIT
+   DELETE — optimistic: remove from UI instantly
 ════════════════════════════════════════ */
 async function deleteExp(id) {
   if (_swipedEl) { _swipedEl.style.transform = 'translateX(0)'; _swipedEl = null; }
   const now = today() + ' · ' + nowTime();
-  const { error } = await sb.from('expenses').update({ deleted: true, deleted_at: now }).eq('id', id);
-  if (error) { toast('Error deleting'); return; }
+
+  // ① Update local state + UI immediately
+  const idx = _homeExpenses.findIndex(e => e.id === id);
+  if (idx !== -1) {
+    _homeExpenses[idx] = { ..._homeExpenses[idx], deleted: true, deleted_at: now };
+    Cache.expenses(HID, _homeExpenses);
+    renderExpenses();
+    if (activeTab === 'dashboard') renderDash();
+  }
   toast('Expense deleted');
+
+  // ② Sync to Supabase in background
+  sb.from('expenses').update({ deleted: true, deleted_at: now }).eq('id', id)
+    .then(({ error }) => { if (error) toast('Sync error — try again'); });
 }
 
+/* ════════════════════════════════════════
+   EDIT — optimistic update
+════════════════════════════════════════ */
+async function saveEdit() {
+  const amt = parseFloat(document.getElementById('edit-amount').value);
+  if (!amt) { toast('Enter an amount'); return; }
+  const cat = CATS.find(c => c.id === _editCat);
+
+  // ① Update local state + UI immediately
+  const idx = _homeExpenses.findIndex(e => e.id === _editId);
+  if (idx !== -1) {
+    _homeExpenses[idx] = { ..._homeExpenses[idx], amount: amt, description: cat?.label || 'Other', icon: cat?.icon || '💸', paid_by: _editPB };
+    Cache.expenses(HID, _homeExpenses);
+    renderExpenses();
+    if (activeTab === 'dashboard') renderDash();
+  }
+  closeModal('modal-edit');
+  toast('Updated ✓');
+
+  // ② Sync to Supabase in background
+  sb.from('expenses').update({ amount: amt, description: cat?.label || 'Other', icon: cat?.icon || '💸', paid_by: _editPB }).eq('id', _editId)
+    .then(({ error }) => { if (error) toast('Sync error — try again'); });
+}
+
+/* ════════════════════════════════════════
+   OPEN EDIT MODAL
+════════════════════════════════════════ */
 function openEdit(id) {
   if (_swipedEl) { _swipedEl.style.transform = 'translateX(0)'; _swipedEl = null; }
   const exp = _homeExpenses.find(e => e.id == id); if (!exp) return;
@@ -872,7 +1335,7 @@ function openEdit(id) {
     const b = document.createElement('button');
     b.className = 'cat-btn' + (c.id === _editCat ? ' active' : '');
     b.innerHTML = `<span class="ci">${c.icon}</span>${c.label}`;
-    b.onclick = () => { _editCat = c.id; cg.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('active', 'na-active')); b.classList.add(c.id === 'na' ? 'na-active' : 'active'); };
+    b.onclick = () => { _editCat = c.id; cg.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('active','na-active')); b.classList.add(c.id==='na'?'na-active':'active'); };
     cg.appendChild(b);
   });
   const pg = document.getElementById('edit-pb-grid'); pg.innerHTML = '';
@@ -885,20 +1348,6 @@ function openEdit(id) {
   });
   openModal('modal-edit');
 }
-
-async function saveEdit() {
-  const amt = parseFloat(document.getElementById('edit-amount').value);
-  if (!amt) { toast('Enter an amount'); return; }
-  const cat = CATS.find(c => c.id === _editCat);
-  const { error } = await sb.from('expenses').update({ amount: amt, description: cat?.label || 'Other', icon: cat?.icon || '💸', paid_by: _editPB }).eq('id', _editId);
-  if (error) { toast('Error saving'); return; }
-  closeModal('modal-edit');
-  toast('Updated ✓');
-}
-
-/* ════════════════════════════════════════
-   ADD EXPENSE
-════════════════════════════════════════ */
 function openAdd() {
   if (!_homeMembers.length) return;
   selCat = ''; selPB = U?.name || _homeMembers[0].name; recImg = null;
@@ -970,44 +1419,94 @@ async function scanImg(b64, mime) {
   } catch { area.innerHTML = `<div class="scan-box scan-failed"><span>⚠️</span><div style="font-size:13px;color:#e0a040">Could not detect — enter manually</div></div>`; }
 }
 
+/* ════════════════════════════════════════
+   ADD EXPENSE — optimistic: show instantly, sync in bg
+════════════════════════════════════════ */
 async function submitExp() {
   if (!selCat) { toast('Select a category'); return; }
   const amt = parseFloat(document.getElementById('exp-amount').value);
   const cat = CATS.find(c => c.id === selCat);
 
-  // Save image to gallery if present
-  if (recImg) {
-    await sb.from('gallery').insert({ id: Date.now() + '', home_id: HID, image: recImg, amount: amt || 0, paid_by: selPB, description: cat?.label || '', date: today(), created_at: Date.now() });
-    updateGalleryBadge();
+  if (selCat === 'na') {
+    // Gallery only — save image then done
+    closeModal('modal-add');
+    toast('Saved to gallery');
+    if (recImg) {
+      const gItem = { id: 'g_'+Date.now(), home_id: HID, image: recImg, amount: 0, paid_by: selPB, description: '', date: today(), created_at: Date.now() };
+      _homeGal.unshift(gItem); Cache.gal(HID, _homeGal);
+      const b = document.getElementById('gallery-badge');
+      b.style.display = 'flex'; b.textContent = _homeGal.length;
+      sb.from('gallery').insert(gItem);
+    }
+    return;
   }
 
-  if (selCat === 'na') { toast('Saved to gallery only'); closeModal('modal-add'); return; }
   if (!amt) { toast('Enter an amount'); return; }
+  if (!_activeCycle) { toast('No active cycle — create one first'); openModal('modal-new-cycle'); return; }
 
-  const expId = Date.now() + '';
-  const { error } = await sb.from('expenses').insert({ id: expId, home_id: HID, amount: amt, description: cat?.label || 'Other', icon: cat?.icon || '💸', paid_by: selPB, date: today(), deleted: false, created_at: Date.now() });
-  if (error) { toast('Error: ' + error.message); return; }
+  // ① Build expense object
+  const expId = 'e_' + Date.now();
+  const expObj = { id: expId, home_id: HID, cycle_id: _activeCycle.id, amount: amt, description: cat?.label || 'Other', icon: cat?.icon || '💸', paid_by: selPB, date: today(), deleted: false, deleted_at: null, created_at: Date.now() };
 
-  // Post to chat
-  await sb.from('messages').insert({ id: 'm_' + Date.now(), home_id: HID, sender: U.name, type: 'expense', exp_amt: amt, exp_desc: cat?.label || 'Other', exp_icon: cat?.icon || '💸', time: nowTime(), created_at: Date.now() });
-
+  // ② Close modal + update UI IMMEDIATELY (optimistic)
   closeModal('modal-add');
+  _homeExpenses.push(expObj);
+  Cache.expenses(HID, _homeExpenses);
+  renderExpenses();
   toast('Expense added ✓');
+
+  // ③ Also optimistically post to chat
+  const msgObj = { id: 'm_'+Date.now(), home_id: HID, sender: U.name, type: 'expense', text: null, exp_amt: amt, exp_desc: cat?.label||'Other', exp_icon: cat?.icon||'💸', time: nowTime(), created_at: Date.now() };
+  _homeMsgs.push(msgObj); Cache.msgs(HID, _homeMsgs);
+  if (activeTab === 'chat') { appendChatMessage(msgObj); scrollChat(); }
+
+  // ④ Sync both to Supabase in background (parallel)
+  const saves = [
+    sb.from('expenses').insert(expObj),
+    sb.from('messages').insert(msgObj),
+  ];
+  if (recImg) {
+    const gItem = { id: 'g_'+Date.now(), home_id: HID, image: recImg, amount: amt, paid_by: selPB, description: cat?.label||'', date: today(), created_at: Date.now() };
+    _homeGal.unshift(gItem); Cache.gal(HID, _homeGal);
+    const b = document.getElementById('gallery-badge');
+    b.style.display = 'flex'; b.textContent = _homeGal.length;
+    saves.push(sb.from('gallery').insert(gItem));
+  }
+  Promise.all(saves).then(results => {
+    const err = results.find(r => r.error);
+    if (err) toast('Sync error — expense may not appear for others');
+  });
 }
 
 /* ════════════════════════════════════════
-   CHAT
+   CHAT — cache-first load + optimistic send
 ════════════════════════════════════════ */
 async function loadAndRenderChat() {
-  const { data } = await sb.from('messages').select('*').eq('home_id', HID).order('created_at', { ascending: true });
   const el = document.getElementById('chat-messages');
-  if (!data || !data.length) {
-    el.innerHTML = `<div class="empty" style="padding:40px 20px"><div class="empty-icon">💬</div><div class="empty-title">Group Chat</div><div class="empty-sub">Chat with your roommates in real-time</div></div>`;
-    return;
+
+  // ① Show cached messages instantly
+  const cached = Cache.msgs(HID);
+  if (cached.length) {
+    _homeMsgs = cached;
+    renderAllMessages();
   }
+
+  // ② Fetch fresh in background
+  const { data } = await sb.from('messages').select('*').eq('home_id', HID).order('created_at', { ascending: true });
+  if (data) {
+    _homeMsgs = data;
+    Cache.msgs(HID, data);
+    renderAllMessages();
+  } else if (!cached.length) {
+    el.innerHTML = `<div class="empty" style="padding:40px 20px"><div class="empty-icon">💬</div><div class="empty-title">Group Chat</div><div class="empty-sub">Chat with your roommates in real-time</div></div>`;
+  }
+}
+
+function renderAllMessages() {
+  const el = document.getElementById('chat-messages');
   el.innerHTML = '';
   let lastDate = '';
-  data.forEach(m => {
+  _homeMsgs.forEach(m => {
     const d = new Date(m.created_at);
     const dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
     if (dateStr !== lastDate) {
@@ -1022,10 +1521,7 @@ async function loadAndRenderChat() {
 
 function appendChatMessage(m) {
   const el = document.getElementById('chat-messages');
-  // Remove empty state if present
-  const emptyEl = el.querySelector('.empty');
-  if (emptyEl) emptyEl.remove();
-
+  const emptyEl = el.querySelector('.empty'); if (emptyEl) emptyEl.remove();
   const mine = m.sender === U?.name;
   const wrap = document.createElement('div');
   wrap.className = 'chat-bubble-wrap ' + (mine ? 'mine' : 'theirs');
@@ -1034,7 +1530,7 @@ function appendChatMessage(m) {
   inner += `<div><div class="chat-bubble ${mine ? 'bubble-mine' : 'bubble-theirs'}">`;
   if (!mine) inner += `<div class="bubble-name">${m.sender}</div>`;
   if (m.type === 'expense') {
-    inner += `<div style="font-size:13px;margin-bottom:4px">${mine ? 'Added an expense' : 'Added an expense'}</div>`;
+    inner += `<div style="font-size:13px;margin-bottom:4px">Added an expense</div>`;
     inner += `<div class="expense-chip"><span style="font-size:22px">${m.exp_icon}</span><div><div class="chip-amt">₹${Number(m.exp_amt).toLocaleString('en-IN')}</div><div class="chip-meta">${m.exp_desc}</div></div></div>`;
   } else {
     inner += m.text || '';
@@ -1044,54 +1540,75 @@ function appendChatMessage(m) {
   el.appendChild(wrap);
 }
 
-function scrollChat() { const el = document.getElementById('chat-messages'); setTimeout(() => el.scrollTop = el.scrollHeight, 80); }
+function scrollChat() { const el = document.getElementById('chat-messages'); setTimeout(() => el.scrollTop = el.scrollHeight, 50); }
 
-async function sendMsg() {
+function sendMsg() {
   const inp = document.getElementById('chat-inp');
   const text = inp.value.trim(); if (!text) return;
   inp.value = ''; inp.style.height = '';
-  const { error } = await sb.from('messages').insert({ id: 'm_' + Date.now(), home_id: HID, sender: U.name, type: 'text', text, time: nowTime(), created_at: Date.now() });
-  if (error) toast('Failed to send');
+
+  // ① Add to UI immediately
+  const msgObj = { id: 'm_'+Date.now(), home_id: HID, sender: U.name, type: 'text', text, time: nowTime(), created_at: Date.now() };
+  _homeMsgs.push(msgObj); Cache.msgs(HID, _homeMsgs);
+  appendChatMessage(msgObj); scrollChat();
+
+  // ② Sync in background
+  sb.from('messages').insert(msgObj).then(({ error }) => {
+    if (error) toast('Message failed to send');
+  });
 }
+
 function chatEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
 function autoResize(el) { el.style.height = ''; el.style.height = Math.min(el.scrollHeight, 100) + 'px'; }
 
 /* ════════════════════════════════════════
-   GALLERY
+   GALLERY — cache-first
 ════════════════════════════════════════ */
 async function openGallery() {
-  const { data: g, count } = await sb.from('gallery').select('*', { count: 'exact' }).eq('home_id', HID).order('created_at', { ascending: false });
-  const { data: home } = await sb.from('homes').select('name').eq('id', HID).single();
-  document.getElementById('gallery-sub').textContent = (g?.length || 0) + ' screenshots · ' + (home?.name || '');
+  openModal('modal-gallery');
   const body = document.getElementById('gallery-body');
-  if (!g || !g.length) {
+
+  // Show cached immediately
+  const cached = Cache.gal(HID);
+  if (cached.length) { _homeGal = cached; renderGalleryBody(); }
+  else body.innerHTML = `<div style="text-align:center;padding:30px;color:#ccc">Loading...</div>`;
+
+  document.getElementById('gallery-sub').textContent = (cached.length || '…') + ' screenshots · ' + (_homeData?.name || '');
+
+  // Fetch fresh in background
+  const { data: g } = await sb.from('gallery').select('*').eq('home_id', HID).order('created_at', { ascending: false });
+  if (g) {
+    _homeGal = g; Cache.gal(HID, g);
+    document.getElementById('gallery-sub').textContent = g.length + ' screenshots · ' + (_homeData?.name || '');
+    renderGalleryBody();
+    const b = document.getElementById('gallery-badge');
+    if (g.length) { b.style.display = 'flex'; b.textContent = g.length; } else b.style.display = 'none';
+  }
+}
+
+function renderGalleryBody() {
+  const body = document.getElementById('gallery-body');
+  if (!_homeGal.length) {
     body.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">No receipts yet</div><div class="empty-sub">Upload UPI screenshots when adding expenses</div></div>`;
-    openModal('modal-gallery'); return;
+    return;
   }
   let html = '<div class="gallery-grid">';
-  g.forEach((item, i) => {
-    html += `<div class="gallery-item" style="animation-delay:${i * 0.04}s" data-idx="${i}"><img class="gallery-img" src="${item.image}" alt=""><div class="gallery-info"><div class="gallery-amount">₹${Number(item.amount).toLocaleString('en-IN')}</div><div class="gallery-meta">${item.paid_by} · ${item.date}</div></div></div>`;
+  _homeGal.forEach((item, i) => {
+    html += `<div class="gallery-item" style="animation-delay:${i * 0.04}s" data-idx="${i}"><img class="gallery-img" src="${item.image}" alt="" loading="lazy"><div class="gallery-info"><div class="gallery-amount">₹${Number(item.amount||0).toLocaleString('en-IN')}</div><div class="gallery-meta">${item.paid_by} · ${item.date}</div></div></div>`;
   });
   body.innerHTML = html + '</div>';
-  window._galImgs = g.map(x => x.image);
+  window._galImgs = _homeGal.map(x => x.image);
   body.querySelectorAll('.gallery-item').forEach((el, i) => el.addEventListener('click', () => openFullImg(i)));
-  openModal('modal-gallery');
 }
 
 function openFullImg(idx) { document.getElementById('fullimg').src = window._galImgs?.[idx] || ''; document.getElementById('fullimg-overlay').classList.remove('hidden'); }
 function closeFullImg() { document.getElementById('fullimg-overlay').classList.add('hidden'); document.getElementById('fullimg').src = ''; }
 
-async function updateGalleryBadge() {
-  const { count } = await sb.from('gallery').select('*', { count: 'exact', head: true }).eq('home_id', HID);
-  const b = document.getElementById('gallery-badge');
-  if (count > 0) { b.style.display = 'flex'; b.textContent = count; } else b.style.display = 'none';
-}
-
 /* ════════════════════════════════════════
    DASHBOARD
 ════════════════════════════════════════ */
 function renderDash() {
-  const exps = _homeExpenses.filter(e => !e.deleted);
+  const exps = _activeCycle ? cycleExpsFor(_activeCycle) : _homeExpenses.filter(e => !e.deleted);
   const total = exps.reduce((s, e) => s + Number(e.amount), 0);
   const n = _homeMembers.length; const ph = n > 0 ? total / n : 0;
   const paid = {}; _homeMembers.forEach(m => paid[m.name] = 0);
@@ -1112,41 +1629,12 @@ function renderDash() {
 }
 
 /* ════════════════════════════════════════
-   SETTLE UP
-════════════════════════════════════════ */
-function renderSettle() {
-  const exps = _homeExpenses.filter(e => !e.deleted);
-  const total = exps.reduce((s, e) => s + Number(e.amount), 0);
-  const n = _homeMembers.length; const ph = n > 0 ? total / n : 0;
-  const paid = {}; _homeMembers.forEach(m => paid[m.name] = 0);
-  exps.forEach(e => { if (paid[e.paid_by] !== undefined) paid[e.paid_by] += Number(e.amount); });
-  const bal = {}; _homeMembers.forEach(m => { bal[m.name] = (paid[m.name] || 0) - ph; });
-  const settlements = []; const b = { ...bal };
-  for (let i = 0; i < 20; i++) {
-    const creds = Object.entries(b).filter(([, v]) => v > 0.5).sort((a, c) => c[1] - a[1]);
-    const debts = Object.entries(b).filter(([, v]) => v < -0.5).sort((a, c) => a[1] - c[1]);
-    if (!creds.length || !debts.length) break;
-    const [cn, cv] = creds[0]; const [dn, dv] = debts[0];
-    const amt = Math.min(cv, -dv);
-    settlements.push({ from: dn, to: cn, amount: Math.round(amt) });
-    b[cn] -= amt; b[dn] += amt;
-  }
-  let html = '';
-  if (!settlements.length) html = `<div class="empty"><div class="empty-icon">🎉</div><div class="empty-title">All settled up!</div><div class="empty-sub">Everyone has paid their fair share</div></div>`;
-  else { html += `<div class="panel-lbl">Who Pays Whom</div>`; settlements.forEach(s => { html += `<div class="settle-card"><div class="s-from">${s.from.charAt(0).toUpperCase()}</div><span style="color:#ccc;font-size:14px">→</span><div class="s-to">${s.to.charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div class="s-names"><b>${s.from}</b> pays <b>${s.to}</b></div><div class="s-sub">to settle balance</div></div><div class="s-amount">₹${s.amount.toLocaleString('en-IN')}</div></div>`; }); }
-  html += `<div style="height:14px"></div><div class="panel-lbl">Individual Balances</div>`;
-  _homeMembers.forEach(m => {
-    const b2 = bal[m.name] || 0; const pos = b2 > 0.5; const neg = b2 < -0.5;
-    html += `<div class="settle-card" style="border-color:${pos ? 'rgba(39,174,96,0.2)' : neg ? 'rgba(231,76,60,0.2)' : '#f0f0f0'}"><div class="m-avatar" style="background:${pos ? '#eafaf1' : neg ? '#fdf2f2' : '#f0f0f0'};color:${pos ? 'var(--green)' : neg ? 'var(--red)' : '#888'}">${m.name.charAt(0).toUpperCase()}</div><div style="flex:1"><div class="s-names">${m.name}${m.phone === U?.phone ? ' (you)' : ''}</div><div class="s-sub">Paid ₹${(paid[m.name] || 0).toLocaleString('en-IN')}</div></div><div style="text-align:right;font-size:13px;font-weight:700;color:${pos ? 'var(--green)' : neg ? 'var(--red)' : '#aaa'}">${pos ? 'Gets back' : neg ? 'Owes' : 'Settled'}${pos || neg ? '<br>₹' + Math.abs(Math.round(b2)).toLocaleString('en-IN') : ''}</div></div>`;
-  });
-  document.getElementById('settle-content').innerHTML = html;
-}
-
 /* ════════════════════════════════════════
    SETTINGS
 ════════════════════════════════════════ */
 async function renderSettings() {
-  const { data: home } = await sb.from('homes').select('*').eq('id', HID).single();
+  const home = _homeData || {};
+  const cycleName = _activeCycle ? _activeCycle.name : 'No active cycle';
   const members = _homeMembers.map(m => `<div class="settings-row"><div class="settings-row-icon">${m.is_owner ? '👑' : '👤'}</div><div>${m.name}</div><div class="settings-row-val">+91 ${m.phone}</div></div>`).join('');
   document.getElementById('settings-content').innerHTML = `
     <div class="settings-block"><div class="settings-lbl">Your Profile</div>
@@ -1155,7 +1643,9 @@ async function renderSettings() {
     </div>
     <div class="settings-block"><div class="settings-lbl">🏠 ${home?.name || ''}</div>
       ${home?.description ? `<p style="font-size:13px;color:#aaa;margin-bottom:12px">${home.description}</p>` : ''}
-      <div class="settings-lbl" style="margin-top:4px">Members (${_homeMembers.length})</div>${members}
+      <div class="settings-row"><div class="settings-row-icon">📂</div><div>Active Cycle</div><div class="settings-row-val">${cycleName}</div></div>
+      <div class="settings-row"><div class="settings-row-icon">🗂️</div><div>Closed Cycles</div><div class="settings-row-val">${_allCycles.filter(c=>c.status==='closed').length}</div></div>
+      <div class="settings-lbl" style="margin-top:12px">Members (${_homeMembers.length})</div>${members}
     </div>
     <div style="height:12px"></div>
     <button class="btn-secondary" onclick="switchHome()" style="border-color:#eee;margin-bottom:10px">🔄 Switch Home</button>
@@ -1175,7 +1665,7 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab)?.classList.add('active');
   activeTab = tab;
   if (tab === 'dashboard') renderDash();
-  if (tab === 'settle') renderSettle();
+  if (tab === 'history') renderHistory();
   if (tab === 'settings') renderSettings();
   if (tab === 'chat') {
     _chatUnread = 0;
@@ -1200,16 +1690,19 @@ let _tt;
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 3000); }
 
 /* ════════════════════════════════════════
-   AUTO-LOGIN
+   AUTO-LOGIN — trust local session, no round-trip
 ════════════════════════════════════════ */
 (async function init() {
   const sess = S.get('ht_sess');
   if (sess && sess.exp > Date.now() && sess.user) {
     U = sess.user;
     if (sess.homeId) {
-      const { data: home } = await sb.from('homes').select('id').eq('id', sess.homeId).single();
-      if (home) { HID = sess.homeId; await enterHome(HID); return; }
+      // Go straight in — no Supabase check needed (cache handles it)
+      HID = sess.homeId;
+      await enterHome(HID);
+      return;
     }
+    // Multiple homes — need to fetch
     await renderHomePicker();
     go('home-picker');
   } else {
